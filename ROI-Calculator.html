@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROI Calculator</title>
+    <style>
+        /* Styling for the calculator */
+        body {
+            font-family: Montserrat, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .step-wrapper {
+            display: flex;
+            justify-content: center;
+            max-width: 600px;
+            text-align: left;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-email {
+            display: flex;
+            flex-direction: column;
+            max-width: 100%;
+            justify-content: left;
+            gap: 16px;
+        }
+
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .container-calculator {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+
+        h2 {
+            margin-top: 12;
+            font-size: 20px;
+        }
+
+        .pulse-text {
+            color: #006bde;
+        }
+
+        p {
+            font-size: small;
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        .paragraph-wrapper {
+            max-width: 100%;
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: 400;
+            font-size: 14px;
+        }
+
+        .formatted-input {
+            width: 20%;
+            padding: 4px;
+            padding-right: 8px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            text-align: right;
+        }
+
+        .formatted-input::placeholder {
+            text-align: left;
+            color: #999; /* Optional: change placeholder color */
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #deeaf5;
+            color: rgb(23, 23, 23);
+            padding: 10px 20px;
+            border-color: #989898;
+            border-width: 2px;
+            border-radius: 5px;
+            cursor: pointer;
+            max-width: 100%;
+        }
+
+        .btn-wrapper {
+            max-width: 100%;
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row; 
+        }
+
+        .calculate-and-next {
+            max-width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            flex-direction: row;
+            gap: 16px; 
+        }
+        
+        .result {
+    display: flex;
+    justify-content: space-between; /* Align label on left, value on right */
+    margin-top: 20px;
+    margin-bottom: 15px;
+    color: #007bff;
+    font-weight: 600;
+    font-size: large;
+    max-width: 100%;
+}
+
+        .result-black {
+    display: flex;
+    justify-content: space-between; /* Align label on left, value on right */
+    margin-top: 20px;
+    margin-bottom: 15px;
+    color: #666;
+    font-weight: 400;
+    font-size: medium;
+    max-width: 100%;
+}
+        
+
+.result-label {
+    text-align: left;
+    flex-grow: 1; /* Allow the label to take up remaining space */
+}
+
+.result-value {
+    text-align: right;
+    flex-grow: 0; /* Ensure the value doesn't stretch */
+}
+
+
+        .btn:hover {
+            background-color: #ebebeb;
+        }
+
+        .btn-calculate {
+            background-color: #007bff;
+            color: white;
+            font-weight: 700;
+            border: none;
+        }
+
+        .btn-calculate:hover {
+            background-color: #006bde;
+            box-shadow: 0 0 10px rgba(139, 139, 139, 0.6);
+        }
+
+        .calculate-button-wrapper {
+            max-width: 100%;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .download-button-wrapper {
+            max-width: 100%;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .step-indicator {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .step-indicator span {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #ccc;
+            border-radius: 50%;
+            margin: 0 5px;
+        }
+
+        .step-indicator .active {
+            background-color: #007bff;
+        }
+
+
+
+
+      /* Progress bar container */
+.step-indicator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+/* Wrap circles and labels in a container */
+.step-item {
+    display: flex;
+    flex-direction: column; /* Stack the label under the circle */
+    align-items: center;
+}
+
+/* Progress circles */
+.step-indicator .step-circle {
+    width: 30px;
+    height: 30px;
+    background-color: #ccc;
+    border-radius: 50%; /* Ensure the shape stays circular */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: white;
+    position: relative;
+    z-index: 1;
+}
+
+/* When a step is completed */
+.step-indicator .step-circle.completed {
+    background-color: #28a745; /* Green for completed steps */
+}
+
+/* When a step is currently active */
+.step-indicator .step-circle.active {
+    background-color: #007bff; /* Blue for active step */
+    border-radius: 50%; /* Keep it circular */
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.6); /* Optional glow effect */
+}
+
+/* Progress lines between circles */
+.step-indicator .line {
+    flex-grow: 1;
+    height: 2px;
+    background-color: #ccc;
+    margin: 0 10px;
+}
+
+/* When step is completed, make the line green */
+.step-indicator .line.completed {
+    background-color: #28a745; /* Matches the green of completed steps */
+}
+
+/* Step label under each circle */
+.step-item .step-label {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    body {
+        padding: 10px; /* Less padding on smaller screens */
+    }
+
+    .container-calculator {
+        padding: 15px; /* Less padding inside the calculator */
+    }
+
+    h2 {
+        font-size: 18px; /* Smaller headings on mobile */
+    }
+
+    p {
+        font-size: 14px; /* Increase paragraph font size */
+    }
+
+    input[type="number"], .btn {
+        padding: 8px; /* Larger padding for touch targets */
+        font-size: 14px; /* Larger font size for better readability */
+    
+    }
+
+    .step-indicator .step-circle {
+        width: 25px; /* Smaller size for circles on tablets */
+        height: 25px; /* Smaller size for circles on tablets */
+    }
+
+    .step-indicator .step-label {
+        font-size: 10px; /* Smaller labels for tablets */
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 16px; /* Smaller headings on very small screens */
+    }
+
+    .result {
+        font-size: 16px; /* Smaller result text */
+    }
+
+    .calculate-and-next {
+        flex-direction: column; /* Stack buttons vertically on very small screens */
+        align-items: flex-start; /* Align to the start */
+    }
+
+    .btn {
+        width: 100%; /* Full width buttons */
+    }
+
+    .btn-wrapper {
+            max-width: 100%;
+            display: grid;
+            grid-row: 1;
+            grid-column: 3;
+        }
+
+    .step-indicator .step-circle {
+        width: 20px; /* Even smaller circles on mobile */
+        height: 20px; /* Even smaller circles on mobile */
+    }
+
+    .step-indicator .step-label {
+        font-size: 8px; /* Smaller labels for mobile */
+    }
+}
+
+
+    </style>
+</head>
+<body>
+
+    <form class="form" id="ROIform">
+
+
+    <div class="step-indicator">
+        <div class="step-item">
+            <div class="step-circle completed">1</div>
+            <div class="step-label">Maximize Billing Revenue</div>
+        </div>
+        <div class="line completed"></div>
+        <div class="step-item">
+            <div class="step-circle active">2</div>
+            <div class="step-label">Minimize Inventory Loss</div>
+        </div>
+        <div class="line"></div>
+        <div class="step-item">
+            <div class="step-circle">3</div>
+            <div class="step-label">Saved Labor Cost</div>
+        </div>
+        <div class="line"></div>
+        <div class="step-item">
+            <div class="step-circle">4</div>
+            <div class="step-label">Gross Profit Loss Prevented</div>
+        </div>
+        <div class="line"></div>
+        <div class="step-item">
+            <div class="step-circle">5</div>
+            <div class="step-label">Total Financial Impact $/Month</div>
+        </div>
+        <div class="line"></div>
+        <div class="step-item">
+            <div class="step-circle">6</div>
+            <div class="step-label">ROI Period & Future ROI</div>
+        </div>
+    </div>
+
+
+
+    <div class="step-wrapper">
+
+        <!-- Step 1: Maximize Billing Revenue -->
+       
+        <div id="hs-form-field-1" class="step active">
+            <h2>Step 1: Maximize Billing Revenue</h2>
+            <p>See how much more revenue your clinic can unlock by maximizing claim success.</p>
+            <div class="input-wrapper">
+            <label># of Patient Visits with Drug Administration per Month:</label>
+            <input type="text" id="patientVisits" class="formatted-input" required />
+            </div>
+            <br>
+            <div class="input-wrapper">
+            <label>Avg. Claim Value ($/Patient Visit):</label>
+            <input type="text" id="claimPerVisit" class="formatted-input" required />
+            </div>
+            <br>
+           
+            <div class="result" id="result1"></div>
+
+            
+            <br>
+            <div class="calculate-and-next">
+                <div class="calculate-button-wrapper">
+                    <button class="btn btn-calculate" id="calculate-1">Calculate</button>
+                </div>
+                <button class="btn" id="next-1">Next</button>
+            </div>
+        </div>
+
+    </div>
+    
+    
+    
+    <div class="step-wrapper">
+    
+        <!-- Step 2: Minimize Inventory Loss -->
+        <div id="step-2" class="step">
+            <h2>Step 2: Minimize Inventory Loss</h2>
+            <p>See how much savings can be gained through expiration tracking.</p>
+            <div class="input-wrapper">
+            <label>Avg. Total Purchasing Amount ($/Month):</label>
+            <input type="text" id="purchasingValue" class="formatted-input" required />
+            </div>
+            <br>
+           
+            <div class="result" id="result2"></div>
+            <br>
+            <div class="btn-wrapper">
+                <button class="btn btn-back" id="prev-2">Go Back</button>
+                <div class="calculate-and-next">
+                  <div class="calculate-button-wrapper">
+                    <button class="btn btn-calculate" id="calculate-2">Calculate</button>
+                 </div>
+                 <button class="btn" id="next-2">Next</button>
+                 </div>
+            </div>
+        </div>
+    
+    </div>
+    
+    
+    <div class="step-wrapper">
+    
+        <!-- Step 3: Labor Cost Savings -->
+        <div id="step-3" class="step">
+            <h2>Step 3: Labor Cost Savings</h2>
+            <p>See how much you can save by reducing time spent on inventory receiving and tracking.</p>
+
+            <div class="input-wrapper">
+            <label># of Facilities Your Clinic Has:</label>
+            <input type="text" id="facilities" class="formatted-input" required />
+            </div>
+
+            <br>
+
+            <div class="input-wrapper">
+            <label># of Shipments Received per Month per Facility:</label>
+            <input type="text" id="shipments" class="formatted-input" required="required" />
+            </div>
+            
+            <br>
+
+            <div class="input-wrapper">
+            <label>Avg. # of Items per Shipment:</label>
+            <input type="text" id="unitsPerShipment" class="formatted-input" required="required" />
+            </div>
+
+            <br>
+
+            <div class="input-wrapper">
+            <label>Labor Cost for Receiving Staff ($/Hour):</label>
+            <input type="text" id="laborCost" class="formatted-input" required="required" />
+            </div>
+
+            <br>
+           
+            <div class="result" id="result3"></div>
+            <br>
+            <div class="btn-wrapper">
+                <button class="btn btn-back" id="prev-3">Go Back</button>
+                <div class="calculate-and-next">
+                <div class="calculate-button-wrapper">
+                    <button class="btn btn-calculate" id="calculate-3">Calculate</button>
+                </div>
+                <button class="btn" id="next-3">Next</button>
+            </div>
+            </div>
+        </div>
+    
+    </div>
+    
+
+
+<div class="step-wrapper">
+
+    <!-- Step 4: Maximize Revenue with PAR Level -->
+    <div id="step-4" class="step">
+        <h2>Step 4: Maximize Revenue with PAR Level</h2>
+        <p>See how much you can save by using purchasing suggestions to prevent product shortages.</p>
+
+        <div class="input-wrapper">
+        <label>Avg. # of Cancelled Appointments per Month:</label>
+        <input type="text" id="cancelledAppointments" class="formatted-input" required />
+        </div>
+        
+        <br>
+
+        <div class="input-wrapper">
+        <label>Avg. Gross Profit per Appointment ($):</label>
+        <input type="text" id="grossProfitPerAppointment" class="formatted-input" required />
+        </div>
+        
+        <br>
+       
+        <div class="result" id="result4"></div>
+        <br>
+       <div class="btn-wrapper">
+        <button class="btn btn-back" id="prev-4">Go Back</button>
+         <div class="calculate-and-next">
+            <div class="calculate-button-wrapper">
+                 <button class="btn btn-calculate" id="calculate-4">Calculate</button>
+            </div>
+            <button class="btn" id="next-4">Next</button>
+         </div>
+       </div>
+    </div>
+
+</div>
+
+
+<div class="step-wrapper">
+
+    <!-- Step 5: Total Financial Impact -->
+    <div id="step-5" class="step">
+        <h2>Step 5: Total Financial Impact</h2>
+        <p>This is how much a well-implemented software solution can save you each month.</p>
+        
+    <div class="result-black" id="totalClaimLossPrevented"></div>
+    <div class="result-black" id="totalExpiredInventoryLoss"></div>
+    <div class="result-black" id="totalSavedLaborCost"></div>
+    <div class="result-black" id="totalProfitLossPrevented"></div>
+
+    <hr> <!-- Add a separator line for clarity -->
+    
+    <div class="result" id="totalFinancialImpact"></div>
+
+        <br>
+        <div class="btn-wrapper">
+            <button class="btn btn-back" id="prev-5">Go Back</button>
+            <button class="btn" id="next-5">Next</button>
+        </div>
+    </div>
+
+</div>
+
+<div class="step-wrapper">
+
+    <!-- Step 6: PULSE -->
+    <div id="step-6" class="step">
+        <h2>Step 6: <span class="pulse-text">PULSE</span> ROI Calculation</h2>
+        <div class="paragraph-wrapper">
+            <p>Calculate the time to reach breakeven on the costs of setting up Pulse and the monthly return in subsequent months, factoring in staff training hours and additional costs.</p>
+        </div>
+        
+        <div class="input-wrapper">
+        <label># of Employees that will be Trained to Use Pulse:</label>
+        <input type="text" id="staffToTrain" class="formatted-input" required />
+        </div>
+        
+        <br>
+       
+        <div class="result" id="roiPeriod"></div>
+        <div class="result" id="futureROI"></div>
+        <br>
+       <div class="btn-wrapper">
+        <button class="btn btn-back" id="prev-6">Go Back</button>
+         <div class="calculate-and-next">
+             <div class="calculate-button-wrapper">
+                <button class="btn btn-calculate" id="calculate-6">Calculate</button>
+            </div>
+            <button class="btn" id="finish">Next</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="step-wrapper">
+
+    <!-- Final Screen -->
+    <div id="final-result" class="step">
+       
+        <div class="download-button-wrapper">
+            <h2>Detailed ROI Report</h2>
+            
+                <label for="email">Enter your email to receive the detailed ROI report with calculation methods and steps.</label>
+                <input class="email-field" type="email" id="userEmail" placeholder="Enter your email address" required>
+                
+                    <button class="btn btn-calculate" id="submit-button" type="submit">Submit</button>
+        </div>
+    </div>
+
+</div>
+
+    <script>
+
+        // Global Variables
+        let claimLossPrevented = 0;
+        let expiredInventoryLossPrevented = 0;
+        let savedLaborCost = 0;
+        let profitLossPrevented = 0;
+        let totalFinancialImpact = 0;
+       
+        
+
+        function formatCurrency(value) {
+    return Math.round(value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+
+// Function to format currency
+function formatCurrencyInput(value) {
+    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// Event listener for formatting inputs
+document.querySelectorAll('.formatted-input').forEach(input => {
+    input.addEventListener('input', function() {
+        // Remove any non-numeric characters
+        const numericValue = this.value.replace(/[^0-9]/g, '');
+        
+        // Format and set the input value
+        this.value = formatCurrencyInput(numericValue);
+    });
+});
+
+
+
+
+
+
+
+
+
+function areAllFieldsFilled(step) {
+    const inputs = document.querySelectorAll(`#${step} input[required]`);
+    for (const input of inputs) {
+        if (!input.value) {
+            return false; // Found an empty required field
+        }
+    }
+    return true; // All required fields are filled
+}
+
+// Step 1: Billing Revenue Calculation
+document.getElementById('calculate-1').addEventListener('click', function() {
+    if (areAllFieldsFilled('hs-form-field-1')) {
+        const patientVisits = parseFloat(document.getElementById('patientVisits').value.replace(/,/g, '')) || 0;
+        const claimPerVisit = parseFloat(document.getElementById('claimPerVisit').value.replace(/,/g, '')) || 0;
+
+        const totalClaim = patientVisits * claimPerVisit;
+
+        const rejectionRate = 0.05; // 5% rejection rate
+        claimLossPrevented = totalClaim * rejectionRate;
+        patientVisitsinput = patientVisits;
+        claimPerVisitinput = claimPerVisit;
+
+        document.getElementById('result1').innerHTML = `
+    <span class="result-label">Claim Loss Prevented:</span>
+    <span class="result-value">$${formatCurrency(claimLossPrevented)}</span>`;
+    } else {
+        alert("Please fill in all required fields.");
+    }
+});
+
+// Step 2: Inventory Loss Calculation
+document.getElementById('calculate-2').addEventListener('click', function() {
+    if (areAllFieldsFilled('step-2')) {
+        const purchasingValue = parseFloat(document.getElementById('purchasingValue').value.replace(/,/g, '')) || 0;
+        const expiredProductRate = 0.01; // 1% constant expired product rate
+        expiredInventoryLossPrevented = purchasingValue * expiredProductRate;
+        purchasingValueinput = purchasingValue;
+
+        document.getElementById('result2').innerHTML = `
+    <span class="result-label">Expired Inventory Loss Prevented:</span>
+    <span class="result-value">$${formatCurrency(expiredInventoryLossPrevented)}</span>`;
+    } else {
+        alert("Please fill in all required fields.");
+    }
+});
+
+// Step 3: Labor Cost Savings Calculation
+document.getElementById('calculate-3').addEventListener('click', function() {
+    if (areAllFieldsFilled('step-3')) {
+        const facilities = parseFloat(document.getElementById('facilities').value.replace(/,/g, '')) || 0;
+        const shipments = parseFloat(document.getElementById('shipments').value.replace(/,/g, '')) || 0;
+        const unitsPerShipment = parseFloat(document.getElementById('unitsPerShipment').value.replace(/,/g, '')) || 0;
+        const laborCost = parseFloat(document.getElementById('laborCost').value.replace(/,/g, '')) || 0;
+
+        const unitsReceivedPerMonth = shipments * unitsPerShipment;
+        const timeSavedPerUnit = 0.5; // Constant 0.5 mins saved per unit
+        const hoursSavedPerMonth = Math.round(facilities * unitsReceivedPerMonth * timeSavedPerUnit / 60);
+        savedLaborCost = hoursSavedPerMonth * laborCost;
+        laborCostresult = laborCost;
+        numberofFacilities = facilities;
+        shipmentinput = shipments;
+        unitsPerShipmentinput = unitsPerShipment;
+
+        document.getElementById('result3').innerHTML = `
+    <span class="result-label">Saved Labor Cost:</span>
+    <span class="result-value">$${formatCurrency(savedLaborCost)}</span>`;
+    } else {
+        alert("Please fill in all required fields.");
+    }
+});
+
+       // Step 4: Profit Loss Calculation
+document.getElementById('calculate-4').addEventListener('click', function() {
+    if (areAllFieldsFilled('step-4')) {
+        const cancelledAppointments = parseFloat(document.getElementById('cancelledAppointments').value.replace(/,/g, '')) || 0;
+        const grossProfitPerAppointment = parseFloat(document.getElementById('grossProfitPerAppointment').value.replace(/,/g, '')) || 0;
+
+        cancelledAppointmentsinput = cancelledAppointments;
+        profitLossPrevented = cancelledAppointments * grossProfitPerAppointment;
+
+        document.getElementById('result4').innerHTML = `
+            <span class="result-label">Gross Profit Loss Prevented:</span>
+            <span class="result-value">$${formatCurrency(profitLossPrevented)}</span>`;
+    } else {
+        alert("Please fill in all fields.");
+    }
+});
+
+// Step 5: Display Total Financial Impact
+
+document.getElementById('next-4').addEventListener('click', function() {
+    if (areAllFieldsFilled('step-4')) {
+
+       // Step 1: Billing Revenue Calculation
+    if (areAllFieldsFilled('hs-form-field-1')) {
+        const patientVisits = parseFloat(document.getElementById('patientVisits').value.replace(/,/g, '')) || 0;
+        const claimPerVisit = parseFloat(document.getElementById('claimPerVisit').value.replace(/,/g, '')) || 0;
+        const totalClaim = patientVisits * claimPerVisit;
+
+        const rejectionRate = 0.05; // 5% rejection rate
+        claimLossPrevented = totalClaim * rejectionRate;
+        patientVisitsinput = patientVisits;
+        claimPerVisitinput = claimPerVisit;
+
+        document.getElementById('totalClaimLossPrevented').innerHTML = `
+    <span class="result-label">Claim Loss Prevented:</span>
+    <span class="result-value">$${formatCurrency(claimLossPrevented)}</span>`;
+    } else {
+        alert("Please fill in all required fields.");
+    }
+
+
+        // Step 2: Inventory Loss Calculation
+    if (areAllFieldsFilled('step-2')) {
+        const purchasingValue = parseFloat(document.getElementById('purchasingValue').value.replace(/,/g, '')) || 0;
+        const expiredProductRate = 0.01; // 1% constant expired product rate
+        expiredInventoryLossPrevented = purchasingValue * expiredProductRate;
+        purchasingValueinput = purchasingValue;
+
+        document.getElementById('totalExpiredInventoryLoss').innerHTML = `
+            <span class="result-label">Expired Inventory Loss Prevented:</span>
+            <span class="result-value">$${formatCurrency(expiredInventoryLossPrevented)}</span>`;
+        } else {
+        alert("Please fill in all required fields.");
+    }
+
+
+    // Step 3: Labor Cost Savings Calculation
+    if (areAllFieldsFilled('step-3')) {
+        const facilities = parseFloat(document.getElementById('facilities').value.replace(/,/g, '')) || 0;
+        const shipments = parseFloat(document.getElementById('shipments').value.replace(/,/g, '')) || 0;
+        const unitsPerShipment = parseFloat(document.getElementById('unitsPerShipment').value.replace(/,/g, '')) || 0;
+        const laborCost = parseFloat(document.getElementById('laborCost').value.replace(/,/g, '')) || 0;
+
+        const unitsReceivedPerMonth = shipments * unitsPerShipment;
+        const timeSavedPerUnit = 0.5; // Constant 0.5 mins saved per unit
+        const hoursSavedPerMonth = Math.round(facilities * unitsReceivedPerMonth * timeSavedPerUnit / 60);
+        savedLaborCost = hoursSavedPerMonth * laborCost;
+        laborCostresult = laborCost;
+        numberofFacilities = facilities;
+        shipmentinput = shipments;
+        unitsPerShipmentinput = unitsPerShipment;
+
+        document.getElementById('totalSavedLaborCost').innerHTML = `
+            <span class="result-label">Saved Labor Cost:</span>
+            <span class="result-value">$${formatCurrency(savedLaborCost)}</span>`;
+        } else {
+        alert("Please fill in all required fields.");
+    }
+
+
+    // Step 4: Profit Loss Calculation
+    if (areAllFieldsFilled('step-4')) {
+        const cancelledAppointments = parseFloat(document.getElementById('cancelledAppointments').value.replace(/,/g, '')) || 0;
+        const grossProfitPerAppointment = parseFloat(document.getElementById('grossProfitPerAppointment').value.replace(/,/g, '')) || 0;
+
+        cancelledAppointmentsinput = cancelledAppointments;
+        profitLossPrevented = cancelledAppointments * grossProfitPerAppointment;
+
+
+        document.getElementById('totalProfitLossPrevented').innerHTML = `
+            <span class="result-label">Gross Profit Loss Prevented:</span>
+            <span class="result-value">$${formatCurrency(profitLossPrevented)}</span>`;
+        } else {
+        alert("Please fill in all required fields.");
+    }
+
+
+        // Finally, display the total financial impact
+         // Calculate total financial impact
+         totalFinancialImpact = savedLaborCost + claimLossPrevented + expiredInventoryLossPrevented + profitLossPrevented;
+        document.getElementById('totalFinancialImpact').innerHTML = `
+            <span class="result-label">Total Financial Impact $/Month:</span>
+            <span class="result-value">$${formatCurrency(totalFinancialImpact)}</span>`;
+    }
+});
+
+
+
+
+        // Step 6: PULSE ROI Calculation
+        document.getElementById('calculate-6').addEventListener('click', function() {
+            if (areAllFieldsFilled('step-6')) {
+            const staffToTrain = parseFloat(document.getElementById('staffToTrain').value.replace(/,/g, '')) || 0;
+
+            const initialSetupInvestment = 5000; // Constant setup investment
+            const initialSetupTimePerFacility = 10; // Constant initial setup time per facility
+            const initialTrainingTimePerPerson = 5; // Constant initial training time per person
+            const monthlyFeePerFacility = 2000; // Constant monthly fee per facility
+            const monthlyFee = monthlyFeePerFacility * numberofFacilities; // Constant monthly fee for all
+
+            const totalInitialSetupTime = initialSetupTimePerFacility * parseFloat(document.getElementById('facilities').value);
+            const totalInitialTrainingTime = totalInitialSetupTime + (initialTrainingTimePerPerson * staffToTrain);
+            const totalInitialInvestment = initialSetupInvestment + totalInitialTrainingTime * laborCostresult;
+
+
+            roiPeriod = Math.round( ( totalInitialInvestment / (totalFinancialImpact - monthlyFee) ) * 10000) / 10000;
+            futureROI = totalFinancialImpact - monthlyFee;
+
+
+            document.getElementById('roiPeriod').innerHTML = `
+    <span class="result-label">ROI Period for Initial Investment (in Months):</span>
+    <span class="result-value">${roiPeriod}</span>`;
+    document.getElementById('futureROI').innerHTML = `
+    <span class="result-label">ROI per Month after Initial Period:</span>
+    <span class="result-value">$${formatCurrency(futureROI)}</span>`;
+
+        } else {
+                alert("Please fill in all required fields.");
+            }
+        });
+
+        // Navigation between steps
+        document.getElementById('next-1').addEventListener('click', function() {
+            if (areAllFieldsFilled('hs-form-field-1')) {
+            document.getElementById('hs-form-field-1').classList.remove('active');
+            document.getElementById('step-2').classList.add('active');
+        } else {
+                alert("Please fill in all fields.");
+            }
+        });
+
+        document.getElementById('next-2').addEventListener('click', function() {
+            if (areAllFieldsFilled('step-2')) {
+            document.getElementById('step-2').classList.remove('active');
+            document.getElementById('step-3').classList.add('active');
+        } else {
+                alert("Please fill in all fields.");
+            }
+        });
+
+        document.getElementById('next-3').addEventListener('click', function() {
+            if (areAllFieldsFilled('step-3')) {
+            document.getElementById('step-3').classList.remove('active');
+            document.getElementById('step-4').classList.add('active');
+        } else {
+                alert("Please fill in all fields.");
+            }
+        });
+
+        document.getElementById('next-4').addEventListener('click', function() {
+            if (areAllFieldsFilled('step-4')) {
+            document.getElementById('step-4').classList.remove('active');
+            document.getElementById('step-5').classList.add('active');
+        } else {
+                alert("Please fill in all fields.");
+            }
+        });
+
+        document.getElementById('next-5').addEventListener('click', function() {
+            document.getElementById('step-5').classList.remove('active');
+            document.getElementById('step-6').classList.add('active');
+        });
+
+        document.getElementById('finish').addEventListener('click', function() {
+            if (areAllFieldsFilled('step-6')) {
+            document.getElementById('step-6').classList.remove('active');
+            document.getElementById('final-result').classList.add('active');
+        } else {
+                alert("Please fill in all fields.");
+            }
+        });
+
+        // Back button navigation
+        document.getElementById('prev-2').addEventListener('click', function() {
+            document.getElementById('step-2').classList.remove('active');
+            document.getElementById('hs-form-field-1').classList.add('active');
+        });
+
+        document.getElementById('prev-3').addEventListener('click', function() {
+            document.getElementById('step-3').classList.remove('active');
+            document.getElementById('step-2').classList.add('active');
+        });
+
+        document.getElementById('prev-4').addEventListener('click', function() {
+            document.getElementById('step-4').classList.remove('active');
+            document.getElementById('step-3').classList.add('active');
+        });
+
+        document.getElementById('prev-5').addEventListener('click', function() {
+            document.getElementById('step-5').classList.remove('active');
+            document.getElementById('step-4').classList.add('active');
+        });
+
+        document.getElementById('prev-6').addEventListener('click', function() {
+            document.getElementById('step-6').classList.remove('active');
+            document.getElementById('step-5').classList.add('active');
+        });
+
+
+
+
+// Function to update the progress bar
+function updateProgressBar(step) {
+    const stepCircles = document.querySelectorAll('.step-circle');
+    const stepLines = document.querySelectorAll('.line');
+
+    // Loop through the circles and update classes
+    stepCircles.forEach((circle, index) => {
+        if (index < step - 1) {
+            circle.classList.add('completed');
+            circle.classList.remove('active');
+        } else if (index === step - 1) {
+            circle.classList.add('active');
+            circle.classList.remove('completed');
+        } else {
+            circle.classList.remove('completed', 'active');
+        }
+    });
+
+    // Loop through the lines and update them
+    stepLines.forEach((line, index) => {
+        if (index < step - 1) {
+            line.classList.add('completed');
+        } else {
+            line.classList.remove('completed');
+        }
+    });
+}
+
+// Helper function to check if all fields in the current step are filled
+function areAllFieldsFilled(stepId) {
+    const inputs = document.querySelectorAll(`#${stepId} input[required]`);
+    for (const input of inputs) {
+        if (!input.value.trim()) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+
+// Navigation between steps
+let currentStep = 1;
+const totalSteps = 6;
+
+document.getElementById('next-1').addEventListener('click', function() {
+    if (areAllFieldsFilled('hs-form-field-1')) {
+        document.getElementById('hs-form-field-1').classList.remove('active');
+        document.getElementById('step-2').classList.add('active');
+        currentStep = 2;
+        updateProgressBar(currentStep);
+    } else {
+        alert("Please fill in all fields.");
+    }
+});
+
+document.getElementById('next-2').addEventListener('click', function() {
+    if (areAllFieldsFilled('step-2')) {
+        document.getElementById('step-2').classList.remove('active');
+        document.getElementById('step-3').classList.add('active');
+        currentStep = 3;
+        updateProgressBar(currentStep);
+    } else {
+        alert("Please fill in all fields.");
+    }
+});
+
+document.getElementById('next-3').addEventListener('click', function() {
+    if (areAllFieldsFilled('step-3')) {
+        document.getElementById('step-3').classList.remove('active');
+        document.getElementById('step-4').classList.add('active');
+        currentStep = 4;
+        updateProgressBar(currentStep);
+    } else {
+        alert("Please fill in all fields.");
+    }
+});
+
+document.getElementById('next-4').addEventListener('click', function() {
+    if (areAllFieldsFilled('step-4')) {
+        document.getElementById('step-4').classList.remove('active');
+        document.getElementById('step-5').classList.add('active');
+        currentStep = 5;
+        updateProgressBar(currentStep);
+    } else {
+        alert("Please fill in all fields.");
+    }
+});
+
+document.getElementById('next-5').addEventListener('click', function() {
+    if (areAllFieldsFilled('step-5')) {
+        document.getElementById('step-5').classList.remove('active');
+        document.getElementById('step-6').classList.add('active');
+        currentStep = 6;
+        updateProgressBar(currentStep);
+    } else {
+        alert("Please fill in all fields.");
+    }
+});
+
+// Handling the "Back" buttons
+document.getElementById('prev-2').addEventListener('click', function() {
+    document.getElementById('step-2').classList.remove('active');
+    document.getElementById('hs-form-field-1').classList.add('active');
+    currentStep = 1;
+    updateProgressBar(currentStep);
+});
+
+document.getElementById('prev-3').addEventListener('click', function() {
+    document.getElementById('step-3').classList.remove('active');
+    document.getElementById('step-2').classList.add('active');
+    currentStep = 2;
+    updateProgressBar(currentStep);
+});
+
+document.getElementById('prev-4').addEventListener('click', function() {
+    document.getElementById('step-4').classList.remove('active');
+    document.getElementById('step-3').classList.add('active');
+    currentStep = 3;
+    updateProgressBar(currentStep);
+});
+
+document.getElementById('prev-5').addEventListener('click', function() {
+    document.getElementById('step-5').classList.remove('active');
+    document.getElementById('step-4').classList.add('active');
+    currentStep = 4;
+    updateProgressBar(currentStep);
+});
+
+document.getElementById('prev-6').addEventListener('click', function() {
+    document.getElementById('step-6').classList.remove('active');
+    document.getElementById('step-5').classList.add('active');
+    currentStep = 5;
+    updateProgressBar(currentStep);
+});
+
+// Ensure the progress bar updates on page load to reflect the initial step
+updateProgressBar(currentStep);
+
+
+    </script>
+   
+
+</form>
+
+<script>
+    // Ensure that the script runs after the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('submit-button').addEventListener('click', function() {
+            // Open the specified link in a new tab when the button is clicked
+            window.open('https://www.elevateht.com/roi-results', '_blank');
+        });
+    });
+</script>
+
+ <!-- Start of HubSpot Embed Code -->
+ <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/2942703.js"></script>
+ <!-- End of HubSpot Embed Code -->
+
+ 
+
+</body>
+</html>
