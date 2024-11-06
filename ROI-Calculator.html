@@ -20,6 +20,7 @@
             text-align: left;
             margin-left: auto;
             margin-right: auto;
+            flex-direction: column;
         }
 
         .form-email {
@@ -81,6 +82,34 @@
             font-size: 14px;
         }
 
+        .info {
+            display: flex;
+            flex-direction: row;
+            justify-content: left;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .info-symbol {
+            background-color: #a7a7a7;
+            color: white;
+            border-radius: 100px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            flex-direction: center;
+            justify-content: center;
+        }
+
+        .info-symbol-i {
+            color: white;
+            font-weight: bold;
+        }
+
+        .info-text {
+            display: none;
+        }
+
         .formatted-input {
             width: 20%;
             padding: 4px;
@@ -103,8 +132,6 @@
             background-color: #deeaf5;
             color: rgb(23, 23, 23);
             padding: 10px 20px;
-            border-color: #989898;
-            border-width: 2px;
             border-radius: 5px;
             cursor: pointer;
             max-width: 100%;
@@ -379,7 +406,7 @@
         <div class="line"></div>
         <div class="step-item">
             <div class="step-circle">6</div>
-            <div class="step-label">ROI Period & Future ROI</div>
+            <div class="step-label">ROI Period and Future ROI</div>
         </div>
     </div>
 
@@ -392,6 +419,14 @@
         <div id="hs-form-field-1" class="step active">
             <h2>Step 1: Maximize Billing Revenue</h2>
             <p>See how much more revenue your clinic can unlock by maximizing claim success.</p>
+            <div class="info">
+                <button class="info-symbol" onclick="showOrHide()">
+                    <p class="info-symbol-i">i</p>
+                </button>                
+                <div class="info-text" id="elementToWorkOn">
+                    <p>Our billing accuracy report confirms that all medications, devices, and infusions are billed properly.  Our data shows that about 2.5% of all buy and bill claims have errors.</p>
+                </div>
+            </div>
             <div class="input-wrapper">
             <label># of Patient Visits with Drug Administration per Month:</label>
             <input type="text" id="patientVisits" class="formatted-input" required />
@@ -415,6 +450,8 @@
             </div>
         </div>
 
+        
+
     </div>
     
     
@@ -425,6 +462,11 @@
         <div id="step-2" class="step">
             <h2>Step 2: Minimize Inventory Loss</h2>
             <p>See how much savings can be gained through expiration tracking.</p>
+            <div>
+                <p>
+                    By monitoring expiration dates and properly rotating your inventory you can prevent medications from expiring.  Our data shows that the average practice wastes 1% (could probably be higher) on expired products that can not be given to patients.
+                </p>
+            </div>
             <div class="input-wrapper">
             <label>Avg. Total Purchasing Amount ($/Month):</label>
             <input type="text" id="purchasingValue" class="formatted-input" required />
@@ -443,6 +485,8 @@
                  </div>
             </div>
         </div>
+
+        
     
     </div>
     
@@ -453,6 +497,12 @@
         <div id="step-3" class="step">
             <h2>Step 3: Labor Cost Savings</h2>
             <p>See how much you can save by reducing time spent on inventory receiving and tracking.</p>
+
+            <div>
+                <p>
+                    Counting medications manually, running lot number reports for recalls, determining how much you should order, and managing purchasing and dispensing across multiple locations takes a lot of time.
+                </p>
+            </div>
 
             <div class="input-wrapper">
             <label># of Facilities Your Clinic Has:</label>
@@ -505,6 +555,12 @@
     <div id="step-4" class="step">
         <h2>Step 4: Maximize Revenue with PAR Level</h2>
         <p>See how much you can save by using purchasing suggestions to prevent product shortages.</p>
+
+        <div>
+            <p>
+                Not having a patient's medication is costly to your practice.  They have to be reschedule, and that is time that could be spent treating another patient.  It also can lead to a lot of patient frustration, which could result in the patient looking for another doctor.
+            </p>
+        </div>
 
         <div class="input-wrapper">
         <label>Avg. # of Cancelled Appointments per Month:</label>
@@ -611,6 +667,22 @@
 </div>
 
     <script>
+
+
+        const divContainer = document.querySelector('#elementToWorkOn');
+        let isClicked = true;
+        let showOrHide = function () {
+            if (isClicked) {
+            divContainer.style.display = 'block';
+            isClicked = false;
+        } else {
+            divContainer.style.display = 'none';
+            isClicked = true;
+        }
+
+    }
+    
+
 
         // Global Variables
         let claimLossPrevented = 0;
