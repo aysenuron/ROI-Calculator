@@ -91,7 +91,7 @@
         }
 
         .info-symbol {
-            background-color: #a7a7a7;
+            background-color: #c8c8c8;
             color: white;
             border-radius: 100px;
             width: 30px;
@@ -741,7 +741,7 @@ document.getElementById('calculate-1').addEventListener('click', function() {
 
         const totalClaim = patientVisits * claimPerVisit;
 
-        const rejectionRate = 0.025; // 5% rejection rate
+        const rejectionRate = 0.025; // 2.5% rejection rate
         claimLossPrevented = totalClaim * rejectionRate;
         patientVisitsinput = patientVisits;
         claimPerVisitinput = claimPerVisit;
@@ -823,7 +823,7 @@ document.getElementById('next-4').addEventListener('click', function() {
         const claimPerVisit = parseFloat(document.getElementById('claimPerVisit').value.replace(/,/g, '')) || 0;
         const totalClaim = patientVisits * claimPerVisit;
 
-        const rejectionRate = 0.05; // 5% rejection rate
+        const rejectionRate = 0.025; // 2.5% rejection rate
         claimLossPrevented = totalClaim * rejectionRate;
         patientVisitsinput = patientVisits;
         claimPerVisitinput = claimPerVisit;
