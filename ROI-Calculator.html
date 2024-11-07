@@ -87,8 +87,8 @@
             display: flex;
             flex-direction: row;
             justify-content: left;
+            align-items: center;
             gap: 16px;
-            margin-bottom: 20px;
         }
 
         .info-symbol {
@@ -160,8 +160,7 @@
             display: flex;
             justify-content: space-between;
             /* Align label on left, value on right */
-            margin-top: 20px;
-            margin-bottom: 15px;
+            margin-bottom: 24px;
             color: #007bff;
             font-weight: 600;
             font-size: large;
@@ -379,10 +378,12 @@
             }
 
             .calculate-and-next {
-                flex-direction: column;
+                flex-direction: row;
                 /* Stack buttons vertically on very small screens */
-                align-items: flex-start;
+                align-items: center;
                 /* Align to the start */
+                justify-content: space-between;
+                gap: 12px;
             }
 
             .btn {
@@ -392,9 +393,11 @@
 
             .btn-wrapper {
                 max-width: 100%;
-                display: grid;
-                grid-row: 1;
-                grid-column: 3;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
             }
 
             .step-indicator .step-circle {
