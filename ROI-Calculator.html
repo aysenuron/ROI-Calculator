@@ -692,6 +692,9 @@
             let totalFinancialImpact = 0;
 
 
+            function formatCurrencySingleDecimal(value) {
+                return value.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+            }
 
             function formatCurrency(value) {
                 return Math.round(value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
@@ -926,7 +929,7 @@
 
                     document.getElementById('roiPeriod').innerHTML = `
     <span class="result-label">ROI Period for Initial Investment (in Months):</span>
-    <span class="result-value">${roiPeriod}</span>`;
+    <span class="result-value">${formatCurrencySingleDecimal(roiPeriod)}</span>`;
                     document.getElementById('futureROI').innerHTML = `
     <span class="result-label">ROI per Month after Initial Period:</span>
     <span class="result-value">$${formatCurrency(futureROI)}</span>`;
