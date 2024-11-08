@@ -560,7 +560,7 @@
                             <p class="info-symbol-i">i</p>
                         </div>
                         <div class="info-text" id="elementToWorkOn3">
-                            <p>Counting medications manually, running lot number reports for recalls, determining how much you should order, and managing purchasing and dispensing across multiple locations takes a lot of time.</p>
+                            <p>Counting medications manually, running lot number reports for recalls, determining how much you should order, and managing purchasing and dispensing across multiple locations take a lot of time.</p>
                         </div>
                     </div>
                     <div class="result" id="result3"></div>
@@ -600,7 +600,7 @@
                             <p class="info-symbol-i">i</p>
                         </div>
                         <div class="info-text" id="elementToWorkOn4">
-                            <p>Not having a patient's medication is costly to your practice.  They have to be reschedule, and that is time that could be spent treating another patient.  It also can lead to a lot of patient frustration, which could result in the patient looking for another doctor.</p>
+                            <p>Not having a patient's medication is costly to your practice. They have to be rescheduled, and that is time that could be spent treating another patient. It can also lead to patient frustration, which could result in the patient looking for another doctor.</p>
                         </div>
                     </div>
                     <div class="result" id="result4"></div>
@@ -671,10 +671,14 @@
             <!-- Final Screen -->
             <div id="final-result" class="step">
                 <div class="download-button-wrapper">
+
                     <h2>Detailed ROI Report</h2>
                     <label for="email">Enter your email to receive the detailed ROI report with calculation methods and steps.</label>
                     <input class="email-field" type="email" id="userEmail" placeholder="Enter your email address" required>
                     <button class="btn btn-calculate" id="submit-button" type="submit">Submit</button>
+                    <br>
+                    <div class="result" id="roiPeriodresult"></div>
+                    <div class="result" id="futureROIresult"></div>
                 </div>
             </div> <!-- End of Final Screen -->
         </div> <!-- End of Step Wrapper -->
@@ -938,6 +942,42 @@
                     alert("Please fill in all required fields.");
                 }
             });
+
+
+            // Step 7: PULSE ROI Calculation
+            document.getElementById('finish').addEventListener('click', function () {
+                if (areAllFieldsFilled('step-6')) {
+                    const staffToTrain = parseFloat(document.getElementById('staffToTrain').value.replace(/,/g, '')) || 0;
+
+                    const initialSetupInvestment = 5000; // Constant setup investment
+                    const initialSetupTimePerFacility = 10; // Constant initial setup time per facility
+                    const initialTrainingTimePerPerson = 20; // Constant initial training time per person
+                    const monthlyFeePerFacility = 2000; // Constant monthly fee per facility
+                    const monthlyFee = monthlyFeePerFacility * numberofFacilities; // Constant monthly fee for all
+                    const first3months = 3;
+
+                    const totalInitialSetupTime = initialSetupTimePerFacility * parseFloat(document.getElementById('facilities').value);
+                    const totalInitialTrainingTime = totalInitialSetupTime + (initialTrainingTimePerPerson * staffToTrain);
+                    const totalInitialInvestment = initialSetupInvestment + totalInitialTrainingTime * laborCostresult + monthlyFee * 3;
+
+
+                    roiPeriod = Math.round((totalInitialInvestment / (totalFinancialImpact - monthlyFee) + first3months) * 10000) / 10000;
+                    futureROI = totalFinancialImpact - monthlyFee;
+
+
+                    document.getElementById('roiPeriodresult').innerHTML = `
+    <span class="result-label">ROI Period for Initial Investment (in Months):</span>
+    <span class="result-value">${formatCurrencySingleDecimal(roiPeriod)}</span>`;
+                    document.getElementById('futureROIresult').innerHTML = `
+    <span class="result-label">ROI per Month after Initial Period:</span>
+    <span class="result-value">$${formatCurrency(futureROI)}</span>`;
+
+                } else {
+                    alert("Please fill in all required fields.");
+                }
+            });
+
+
 
             // Navigation between steps
             document.getElementById('next-1').addEventListener('click', function () {
